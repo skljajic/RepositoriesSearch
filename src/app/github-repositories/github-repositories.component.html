@@ -1,0 +1,53 @@
+<div class="container bootstrap snippet">
+  <h1 class="center">Github Repositories Search</h1>
+    <div>
+
+
+    Type repository name:
+    <form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
+      <input #input1 name="favNameItem" ngModel required #favNameItem="ngModel" class="ml-2 form-control input-lg ">
+      <button class="btn btn-default">Search</button>
+
+    </form>
+
+  </div>
+
+  <button type="button" class="btn btn-default" (click)="addFavorite()"> Add to Fav's</button>
+
+  <span *ngFor="let favItem of FavList">
+    <button type="button" class="btn btn-info" (click)="runFav(favItem)">{{favItem}}</button>
+    <button type="button" class="btn btn-danger" (click)="removeFavorite(favItem)">X</button>
+  </span>
+
+
+  <div *ngIf="(searchResult$ | async) as searchResult">
+    <h3 class="center alert alert-success" role="alert">Repositories found:{{searchResult.items.length}}</h3>
+    <hr />
+    <ul class="pagination">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </ul>
+
+
+    <ng-container [ngSwitch]="searchResult.items.length">
+      <ng-container *ngSwitchCase="0">
+        <h3 class="center alert alert-danger" role="alert">No results found</h3>
+      </ng-container>
+
+      <ng-container *ngSwitchDefault>
+        <div *ngFor="let result of searchResult.items | paginate: { itemsPerPage: 6, currentPage: p }">
+          <p>
+            <img src="{{result.owner.avatar_url}}" height="32px" />
+            <b><a href="{{result.html_url}}" target="_blank">{{ result.name }}</a></b>
+          </p>
+          <p> {{ result.description }}</p>
+          <p> <code>Language: {{ result.language }}</code></p>
+          <p> <small><font color="gray"> Date created: <time> {{ result.created_at.slice(0,10) }}</time></font></small></p>
+          <hr />
+        </div>
+        <ul class="pagination">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </ul>
+      </ng-container>
+    </ng-container>
+  </div>
+</div>
